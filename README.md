@@ -19,7 +19,46 @@ Terraform 0.13. Pin module version to `~> v1.0`. Submit pull-requests to `main` 
 
 ## Examples
 
-*
+data "aws_caller_identity" "current" {}
+data "aws_region" "current" {}
+
+data "aws_vpc" "default" {
+  default = true
+}
+
+data "aws_subnet_ids" "all" {
+  vpc_id = data.aws_vpc.default.id
+}
+
+data "aws_security_group" "default" {
+  name = "default"
+
+  filter {
+    name   = "tag:Name"
+    values = ["default"]
+  }
+}
+
+module "core_lambda" {
+  source = "../../"
+
+  function_name = "core"
+
+  image_uri    = "${data.aws_caller_identity.current.account_id}.dkr.ecr.${data.aws_region.current.name}.amazonaws.com/lambda/example-python:latest"
+  package_type = "Image"
+
+  vpc_attach                    = true
+  vpc_config_subnet_ids         = data.aws_subnet_ids.all.ids
+  vpc_config_security_group_ids = [data.aws_security_group.default.id]
+
+  environment_variables = {
+    PROJECT = "test"
+    REGION  = data.aws_region.current.name
+  }
+
+  enable_logs    = true
+  log_group_name = "core-lambda-log"
+}
 
 ## Authors
 
@@ -98,6 +137,18 @@ No modules.
 |------|-------------|
 | <a name="output_lambda_cloudwatch_log_group_arn"></a> [lambda\_cloudwatch\_log\_group\_arn](#output\_lambda\_cloudwatch\_log\_group\_arn) | The ARN of the Cloudwatch Log Group |
 | <a name="output_lambda_cloudwatch_log_group_name"></a> [lambda\_cloudwatch\_log\_group\_name](#output\_lambda\_cloudwatch\_log\_group\_name) | The name of the Cloudwatch Log Group |
+| <a name="output_lambda_function_arn"></a> [lambda\_function\_arn](#output\_lambda\_function\_arn) | The ARN of the Lambda Function |
+| <a name="output_lambda_function_image_uri"></a> [lambda\_function\_image\_uri](#output\_lambda\_function\_image\_uri) | ECR image URI containing the function's deployment package |
+| <a name="output_lambda_function_invoke_arn"></a> [lambda\_function\_invoke\_arn](#output\_lambda\_function\_invoke\_arn) | The Invoke ARN of the Lambda Function |
+| <a name="output_lambda_function_kms_key_arn"></a> [lambda\_function\_kms\_key\_arn](#output\_lambda\_function\_kms\_key\_arn) | The ARN for the KMS encryption key of Lambda Function |
+| <a name="output_lambda_function_last_modified"></a> [lambda\_function\_last\_modified](#output\_lambda\_function\_last\_modified) | The date Lambda Function resource was last modified |
+| <a name="output_lambda_function_name"></a> [lambda\_function\_name](#output\_lambda\_function\_name) | The name of the Lambda Function |
+| <a name="output_lambda_function_qualified_arn"></a> [lambda\_function\_qualified\_arn](#output\_lambda\_function\_qualified\_arn) | The ARN identifying your Lambda Function Version |
+| <a name="output_lambda_function_signing_job_arn"></a> [lambda\_function\_signing\_job\_arn](#output\_lambda\_function\_signing\_job\_arn) | The ARN of the signing job |
+| <a name="output_lambda_function_signing_profile_version_arn"></a> [lambda\_function\_signing\_profile\_version\_arn](#output\_lambda\_function\_signing\_profile\_version\_arn) | The ARN of the signing profile version |
+| <a name="output_lambda_function_source_code_hash"></a> [lambda\_function\_source\_code\_hash](#output\_lambda\_function\_source\_code\_hash) | Base64-encoded representation of raw SHA-256 sum of the zip file |
+| <a name="output_lambda_function_source_code_size"></a> [lambda\_function\_source\_code\_size](#output\_lambda\_function\_source\_code\_size) | The size in bytes of the function .zip file |
+| <a name="output_lambda_function_version"></a> [lambda\_function\_version](#output\_lambda\_function\_version) | Latest published version of Lambda Function |
 | <a name="output_lambda_role_arn"></a> [lambda\_role\_arn](#output\_lambda\_role\_arn) | The ARN of the IAM role created for the Lambda Function |
 | <a name="output_lambda_role_name"></a> [lambda\_role\_name](#output\_lambda\_role\_name) | The name of the IAM role created for the Lambda Function |
 <!-- END OF PRE-COMMIT-TERRAFORM DOCS HOOK -->

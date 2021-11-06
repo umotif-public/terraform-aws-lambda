@@ -1,6 +1,6 @@
-# Minimal example
+# Core example
 
-Configuration in this example should allow you to quickly deploy a Lambda Function with minimal configurations.
+Configuration in this example should allow you to quickly deploy a Lambda Function with VPC.
 
 The lambda function is inside the folder `image`. You will need to build the Dockerfile and push it to an ECR repository to be able to have a successful Terraform deployment.
 
