@@ -3,7 +3,9 @@
 
 # Terraform AWS Lambda
 
-Terraform module to create [AWS Lambda](https://aws.amazon.com/lambda/) services.
+Terraform module to create [AWS Lambda](https://aws.amazon.com/lambda/) service.
+
+**NOTE**: This module is missing a ton of features - feel free to create a pull request to add in more features!
 
 ## Terraform versions
 
@@ -14,51 +16,33 @@ Terraform 0.13. Pin module version to `~> v1.0`. Submit pull-requests to `main` 
 ### Lambda Function
 
 ```hcl
+module "lambda-function" {
+  source = "umotif-public/lambda/aws"
+  version = "~> 1.0"
 
+  function_name = local.name_prefix
+  package_type  = "Image"
+  image_uri     = var.image_uri
+  kms_key_arn   = var.lambda_kms_key_arn
+
+  environment_variables = var.environment
+
+  vpc_attach                    = var.enable_vpc_attach
+  vpc_config_subnet_ids         = var.subnet_ids
+  vpc_config_security_group_ids = [aws_security_group.sg_lambda.id]
+
+  enable_logs      = var.enable_logs
+  log_kms_key_id   = var.log_kms_key_id
+  log_group_name   = "/aws/lambda/${local.name_prefix}"
+
+  tags = var.tags
+}
 ```
 
 ## Examples
 
-data "aws_caller_identity" "current" {}
-data "aws_region" "current" {}
-
-data "aws_vpc" "default" {
-  default = true
-}
-
-data "aws_subnet_ids" "all" {
-  vpc_id = data.aws_vpc.default.id
-}
-
-data "aws_security_group" "default" {
-  name = "default"
-
-  filter {
-    name   = "tag:Name"
-    values = ["default"]
-  }
-}
-
-module "core_lambda" {
-  source = "../../"
-
-  function_name = "core"
-
-  image_uri    = "${data.aws_caller_identity.current.account_id}.dkr.ecr.${data.aws_region.current.name}.amazonaws.com/lambda/example-python:latest"
-  package_type = "Image"
-
-  vpc_attach                    = true
-  vpc_config_subnet_ids         = data.aws_subnet_ids.all.ids
-  vpc_config_security_group_ids = [data.aws_security_group.default.id]
-
-  environment_variables = {
-    PROJECT = "test"
-    REGION  = data.aws_region.current.name
-  }
-
-  enable_logs    = true
-  log_group_name = "core-lambda-log"
-}
+* [Docker Lambda with VPC](https://github.com/umotif-public/terraform-aws-lambda/tree/main/examples/core)
+* [Minimal Docker Lambda](https://github.com/umotif-public/terraform-aws-lambda/tree/main/examples/minimal)
 
 ## Authors
 
