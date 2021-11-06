@@ -177,8 +177,8 @@ variable "log_retention_in_days" {
   default     = null
 }
 
-variable "log_kms_key_arn" {
-  description = "The ARN of the KMS Key to use when encrypting log data."
+variable "log_kms_key_id" {
+  description = "The id of the KMS Key to use when encrypting log data."
   type        = string
   default     = null
 }
