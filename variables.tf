@@ -1,8 +1,3 @@
-variable "name_prefix" {
-  description = "A prefix used for naming resources."
-  type        = string
-}
-
 variable "tags" {
   description = "A map of tags (key-value pairs) passed to resources."
   type        = map(string)
@@ -12,6 +7,11 @@ variable "tags" {
 ##################
 # Lambda Function
 ##################
+variable "function_name" {
+  description = "Unique name for your Lambda Function"
+  type        = string
+}
+
 variable "role" {
   description = "Amazon Resource Name (ARN) of the function's execution role. The role provides the function's identity and access to AWS services and resources."
   type        = string

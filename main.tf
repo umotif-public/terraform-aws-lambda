@@ -2,7 +2,7 @@
 # Function
 ##################
 resource "aws_lambda_function" "main" {
-  function_name                  = "${var.name_prefix}-function"
+  function_name                  = "${var.function_name}-function"
   description                    = var.description
   role                           = var.role == "" ? aws_iam_role.lambda[0].arn : var.role
   runtime                        = var.package_type != "Zip" ? null : var.runtime
@@ -112,19 +112,4 @@ resource "aws_cloudwatch_log_group" "main" {
   kms_key_id        = var.log_kms_key_id
 
   tags = var.tags
-}
-
-resource "aws_iam_role_policy_attachment" "logs_policy" {
-  role       = aws_iam_role.lambda[0].name
-  policy_arn = "arn:${data.aws_partition.current.partition}:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole"
-}
-
-######################
-# VPC Logs Attachment
-######################
-resource "aws_iam_role_policy_attachment" "role_attach_lambdavpc" {
-  count = var.vpc_attach ? 1 : 0
-
-  role       = aws_iam_role.lambda[0].name
-  policy_arn = "arn:${data.aws_partition.current.partition}:iam::aws:policy/service-role/AWSLambdaVPCAccessExecutionRole"
 }
