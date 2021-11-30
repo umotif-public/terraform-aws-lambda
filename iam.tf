@@ -21,7 +21,7 @@ data "aws_iam_policy_document" "assume_role" {
 resource "aws_iam_role" "lambda" {
   count = var.role == "" ? 1 : 0
 
-  name               = "${var.function_name}-lambda-assume-role"
+  name               = "${var.function_name}-role"
   assume_role_policy = data.aws_iam_policy_document.assume_role[0].json
 
   tags = var.tags

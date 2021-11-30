@@ -46,7 +46,9 @@ module "lambda-function" {
 
 ## Authors
 
-Module managed by [Abdul Wahid](https://github.com/Ohid25) ([LinkedIn](https://www.linkedin.com/in/abdul-wahid/)).\
+Module managed by
+- [Abdul Wahid](https://github.com/Ohid25) ([LinkedIn](https://www.linkedin.com/in/abdul-wahid/))
+- [Mohammed Alkatheeri](https://github.com/Mohammed-afk91) ([LinkedIn](https://www.linkedin.com/in/abdalla91/))
 
 <!-- BEGINNING OF PRE-COMMIT-TERRAFORM DOCS HOOK -->
 ## Requirements
